@@ -18,30 +18,43 @@ define('forum/topic/delete-posts', [
 			return;
 		}
 
+		loadModal();
+	};
+
+	function loadModal() {
 		app.parseAndTranslate('modals/delete-posts', {}, function (html) {
 			modal = html;
 
 			$('body').append(modal);
 
-			deleteBtn = modal.find('#delete_posts_confirm');
-			purgeBtn = modal.find('#purge_posts_confirm');
-
-			modal.find('#delete_posts_cancel').on('click', closeModal);
-
-			postSelect.init(function () {
-				checkButtonEnable();
-				showPostsSelected();
-			});
+			initializeModalElements();
+			initializePostSelect();
 			showPostsSelected();
-
-			deleteBtn.on('click', function () {
-				deletePosts(deleteBtn, pid => `/posts/${pid}/state`);
-			});
-			purgeBtn.on('click', function () {
-				deletePosts(purgeBtn, pid => `/posts/${pid}`);
-			});
 		});
-	};
+	}
+
+	function initializeModalElements() {
+		deleteBtn = modal.find('#delete_posts_confirm');
+		purgeBtn = modal.find('#purge_posts_confirm');
+
+		modal.find('#delete_posts_cancel').on('click', closeModal);
+
+		deleteBtn.on('click', function () {
+			deletePosts(deleteBtn, pid => `/posts/${pid}/state`);
+		});
+		purgeBtn.on('click', function () {
+			deletePosts(purgeBtn, pid => `/posts/${pid}`);
+		});
+	}
+
+	function initializePostSelect() {
+		postSelect.init(function () {
+			checkButtonEnable();
+			showPostsSelected();
+		});
+	}
+
+	console.log('Brady Nolin');
 
 	function onAjaxifyEnd() {
 		if (ajaxify.data.template.name !== 'topic' || ajaxify.data.tid !== tid) {
